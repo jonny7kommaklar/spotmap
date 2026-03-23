@@ -1,0 +1,2 @@
+# spotmap
+Europa Spotmap
