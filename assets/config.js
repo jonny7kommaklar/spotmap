@@ -1,6 +1,6 @@
 window.SpotmapConfig = {
   supabaseUrl: 'https://crfxwgkidhljyrwvubnq.supabase.co',
-  supabaseAnonKey: 'crfxwgkidhljyrwvubnq',
+  supabaseAnonKey: 'sb_publishable_CcZD8kOYDjjyQPDM9xc7gA_eTNrMIWR',
   siteTitle: 'Spotmap',
   defaultCityCover: 'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=1400&q=80',
   cityCovers: {
