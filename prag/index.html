@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotmap City</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/config.example.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script defer src="../assets/app.js"></script>
+</head>
+<body data-page="city" data-city="prag">
+  <div class="page-shell">
+    <div id="heroBg" class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="content-wrap">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-badge">🛹</div>
+          <a href="../index.html">Spotmap</a>
+        </div>
+        <div class="row-wrap">
+          <div id="supabaseBadge" class="pill"></div>
+          <button id="refreshBtn" class="ghost-btn">Neu laden</button>
+        </div>
+      </div>
+
+      <section class="hero-copy" style="padding-bottom:20px;max-width:860px">
+        <div class="eyebrow">City Map</div>
+        <h1 id="cityTitle">City Skatemap</h1>
+        <p id="citySubtitle">Lädt...</p>
+      </section>
+
+      <section class="layout-map">
+        <aside class="panel side-panel">
+          <div class="auth-box stack">
+            <div class="panel-head">
+              <strong>Auth</strong>
+              <span id="authUserEmail" class="muted">Nicht eingeloggt</span>
+            </div>
+            <div id="guestHint" class="empty-state">Ohne Login ist die Map lesbar, Projekte aber gesperrt. Also quasi Schaufenster statt Werkzeugkiste.</div>
+            <form id="authForm" class="stack">
+              <div>
+                <div class="label">E-Mail</div>
+                <input id="authEmail" class="input" type="email" placeholder="dein@email.de" />
+              </div>
+              <div>
+                <div class="label">Passwort</div>
+                <input id="authPassword" class="input" type="password" placeholder="••••••••" />
+              </div>
+              <div class="row-wrap">
+                <button type="submit" class="primary-btn">Einloggen</button>
+                <button type="button" id="logoutBtn" class="ghost-btn">Logout</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel-head">
+            <strong>Projekte</strong>
+            <button id="openProjectModal" data-auth-only class="primary-btn">+ Neu</button>
+          </div>
+          <div class="muted">Aktiv: <span id="currentProjectInfo">Kein Projekt aktiv</span></div>
+          <div id="projectList" class="project-list"></div>
+
+          <div class="panel-head">
+            <strong>Spotliste</strong>
+            <span id="spotCount" class="muted">0 Spots</span>
+          </div>
+          <div id="spotList" class="spot-list"></div>
+        </aside>
+
+        <section class="panel map-panel">
+          <div class="map-toolbar">
+            <div class="toolbar-chip">Variante B aktiv: Standards werden nicht als `project_spots` gespeichert</div>
+          </div>
+          <div id="map"></div>
+        </section>
+      </section>
+
+      <div class="footer-note" id="globalStatus">Bereit.</div>
+    </div>
+  </div>
+
+  <div id="projectModalBackdrop" class="modal-backdrop">
+    <div class="modal">
+      <div class="panel-head">
+        <h3>Neues Projekt</h3>
+        <button id="closeProjectModal" class="ghost-btn">Schließen</button>
+      </div>
+      <form id="createProjectForm" class="stack">
+        <div>
+          <div class="label">Projektname</div>
+          <input id="projectName" class="input" type="text" placeholder="Sommertrip 2026" required />
+        </div>
+        <div>
+          <div class="label">Beschreibung</div>
+          <textarea id="projectDescription" class="textarea" placeholder="z. B. Spots für 3 Tage, eher Street, abends noch gut fahrbar"></textarea>
+        </div>
+        <label class="row">
+          <input id="projectIsPublic" type="checkbox" />
+          <span>Öffentlich lesbar</span>
+        </label>
+        <div class="row-wrap">
+          <button type="submit" class="primary-btn">Projekt erstellen</button>
+          <button type="button" class="ghost-btn" id="closeProjectModalAlt" onclick="document.getElementById('closeProjectModal').click()">Abbrechen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

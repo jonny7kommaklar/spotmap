@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/config.example.js"></script>
+  <script defer src="./assets/app.js"></script>
+</head>
+<body data-page="home">
+  <div class="page-shell">
+    <div class="hero-bg" style="background-image:url('https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=1400&q=80')"></div>
+    <div class="hero-overlay"></div>
+    <div class="content-wrap">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-badge">🛹</div>
+          <div>Spotmap</div>
+        </div>
+        <div class="row-wrap">
+          <div id="supabaseBadge" class="pill"></div>
+          <a class="ghost-btn" href="https://jonny7kommaklar.github.io/">jonny7kommaklar.github.io</a>
+        </div>
+      </div>
+
+      <section class="hero-copy">
+        <div class="eyebrow">GitHub Pages × Supabase × Skate Trips</div>
+        <h1>Eine Startseite für Prag, Stuttgart, Innsbruck und was noch alles rollt.</h1>
+        <p>
+          Wähle deine Stadt, öffne die jeweilige Skatemap und arbeite dort mit Projekten, Layern und Spot-Zuständen weiter.
+          Alles auf einer gemeinsamen Oberfläche statt in drei wilden Browser-Tabs, die nachts heimlich gegeneinander kämpfen.
+        </p>
+      </section>
+
+      <div class="section-title">
+        <h2>Städte auswählen</h2>
+        <div class="muted" id="globalStatus">Bereit.</div>
+      </div>
+      <section id="cityGrid" class="grid-3"></section>
+
+      <div class="footer-note">Erstes Frontend-Gerüst. Cities kommen aus Supabase, falls Config gesetzt ist. Sonst wird ein Fallback angezeigt.</div>
+    </div>
+  </div>
+</body>
+</html>
