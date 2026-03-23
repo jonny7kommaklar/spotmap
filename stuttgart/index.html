@@ -14,36 +14,58 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script defer src="../assets/app.js"></script>
 </head>
-<body data-page="city" data-city="stuttgart">
+<body data-page="city" data-city="stuttgart" class="city-mode">
   <div class="page-shell">
     <div id="heroBg" class="hero-bg"></div>
     <div class="hero-overlay"></div>
-    <div class="content-wrap">
-      <div class="topbar">
-        <div class="brand">
-          <div class="brand-badge">🛹</div>
-          <a href="../index.html">Spotmap</a>
-        </div>
-        <div class="row-wrap">
-          <div id="supabaseBadge" class="pill"></div>
-          <button id="refreshBtn" class="ghost-btn">Neu laden</button>
+
+    <div class="city-stage">
+      <div class="city-map-wrap">
+        <section class="map-panel">
+          <div class="map-toolbar">
+            <div class="toolbar-chip">Variante B aktiv · Fokus auf viel Karte, wenig Möbelhaus.</div>
+          </div>
+          <div id="map"></div>
+        </section>
+      </div>
+
+      <div class="city-hud">
+        <button id="settingsToggleBtn" class="city-action-btn" type="button" title="Settings">☰</button>
+        <a class="city-action-btn danger" href="../index.html" title="Leave">↩</a>
+      </div>
+
+      <div class="city-title-pill">
+        <div class="brand-badge">🛹</div>
+        <div>
+          <h1 id="cityTitle">City Skatemap</h1>
+          <p id="citySubtitle">Lädt...</p>
         </div>
       </div>
 
-      <section class="hero-copy" style="padding-bottom:20px;max-width:860px">
-        <div class="eyebrow">City Map</div>
-        <h1 id="cityTitle">City Skatemap</h1>
-        <p id="citySubtitle">Lädt...</p>
-      </section>
+      <nav class="city-dock" aria-label="Panels">
+        <button class="dock-btn" type="button" data-panel-target="settings"><span>⚙️</span><small>Settings</small></button>
+        <button class="dock-btn" type="button" data-panel-target="filter"><span>🔎</span><small>Filter</small></button>
+        <button class="dock-btn" type="button" data-panel-target="spotlist"><span>📍</span><small>Spotlist</small></button>
+        <button class="dock-btn" type="button" data-panel-target="planning"><span>🗓️</span><small>Planung</small></button>
+        <button class="dock-btn" type="button" data-panel-target="areas"><span>🧭</span><small>Bereiche</small></button>
+        <button class="dock-btn" type="button" data-panel-target="layers"><span>🧱</span><small>Layer</small></button>
+      </nav>
 
-      <section class="layout-map">
-        <aside class="panel side-panel">
-          <div class="auth-box stack">
+      <section class="floating-panel" data-panel="settings">
+        <div class="panel-titlebar" data-drag-handle>
+          <strong>Settings</strong>
+          <div class="panel-controls">
+            <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
+            <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-section auth-box stack">
             <div class="panel-head">
               <strong>Auth</strong>
               <span id="authUserEmail" class="muted">Nicht eingeloggt</span>
             </div>
-            <div id="guestHint" class="empty-state">Ohne Login ist die Map lesbar, Projekte aber gesperrt. Also quasi Schaufenster statt Werkzeugkiste.</div>
+            <div id="guestHint" class="empty-state">Ohne Login ist die Map lesbar, Projekte aber gesperrt. Also eher Schaufenster als Werkbank.</div>
             <form id="authForm" class="stack">
               <div>
                 <div class="label">E-Mail</div>
@@ -56,33 +78,130 @@
               <div class="row-wrap">
                 <button type="submit" class="primary-btn">Einloggen</button>
                 <button type="button" id="logoutBtn" class="ghost-btn">Logout</button>
+                <button type="button" id="refreshBtn" class="ghost-btn">Neu laden</button>
               </div>
             </form>
           </div>
 
-          <div class="panel-head">
-            <strong>Projekte</strong>
-            <button id="openProjectModal" data-auth-only class="primary-btn">+ Neu</button>
+          <div class="panel-section stack">
+            <div class="panel-head">
+              <strong>Projekte</strong>
+              <button id="openProjectModal" data-auth-only class="primary-btn">+ Neu</button>
+            </div>
+            <div class="muted">Aktiv: <span id="currentProjectInfo">Kein Projekt aktiv</span></div>
+            <div id="projectList" class="project-list"></div>
           </div>
-          <div class="muted">Aktiv: <span id="currentProjectInfo">Kein Projekt aktiv</span></div>
-          <div id="projectList" class="project-list"></div>
 
-          <div class="panel-head">
-            <strong>Spotliste</strong>
-            <span id="spotCount" class="muted">0 Spots</span>
+          <div class="panel-section stack">
+            <div class="panel-head">
+              <strong>Kleiner Log</strong>
+              <span id="supabaseBadge" class="muted"></span>
+            </div>
+            <div class="mini-log">
+              <div class="mini-log-item" id="globalStatus">Bereit.</div>
+              <div class="mini-log-item">Drag & drop aktiv. Panels lassen sich auch an der Ecke größer ziehen.</div>
+            </div>
           </div>
-          <div id="spotList" class="spot-list"></div>
-        </aside>
-
-        <section class="panel map-panel">
-          <div class="map-toolbar">
-            <div class="toolbar-chip">Variante B aktiv: Standards werden nicht als `project_spots` gespeichert</div>
-          </div>
-          <div id="map"></div>
-        </section>
+        </div>
       </section>
 
-      <div class="footer-note" id="globalStatus">Bereit.</div>
+      <section class="floating-panel" data-panel="filter">
+        <div class="panel-titlebar" data-drag-handle>
+          <strong>Filter</strong>
+          <div class="panel-controls">
+            <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
+            <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-section panel-grid">
+            <div>
+              <div class="label">Suche</div>
+              <input class="input" id="spotSearchInput" type="text" placeholder="Spotname suchen" />
+            </div>
+            <div>
+              <div class="label">Typ</div>
+              <select class="select" id="spotTypeFilter">
+                <option value="">Alle Spottypen</option>
+              </select>
+            </div>
+            <label class="row"><input type="checkbox" id="favoritesOnlyToggle" disabled /> <span>Nur Favoriten (Schritt 2)</span></label>
+            <div class="helper-text">Für Schritt 1 hängt der Filter schon im Layout. Die Live-Logik bauen wir im nächsten Zug sauber an.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="floating-panel" data-panel="spotlist">
+        <div class="panel-titlebar" data-drag-handle>
+          <strong>Spotlist</strong>
+          <div class="panel-controls">
+            <span id="spotCount" class="muted">0 Spots</span>
+            <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
+            <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="spotList" class="spot-list"></div>
+        </div>
+      </section>
+
+      <section class="floating-panel" data-panel="planning">
+        <div class="panel-titlebar" data-drag-handle>
+          <strong>Planung</strong>
+          <div class="panel-controls">
+            <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
+            <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-section">
+            <div class="label">Planungsstatus</div>
+            <div class="helper-text">Hier sitzt später Tagesplanung, Reihenfolge und Routing. Für Schritt 1 steht das Fenster schon bereit, damit die Map nicht wieder in einer Dauer-Sidebar erstickt.</div>
+          </div>
+          <div class="panel-section">
+            <div class="mini-log-item">Tag 1 · Innenstadt · Street-heavy</div>
+            <div class="mini-log-item">Tag 2 · Süd/Ost · eher entspannt</div>
+            <div class="mini-log-item">Tag 3 · Backup bei Regen</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="floating-panel" data-panel="areas">
+        <div class="panel-titlebar" data-drag-handle>
+          <strong>Bereiche</strong>
+          <div class="panel-controls">
+            <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
+            <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="helper-text">Schritt 1 stellt nur das flexible UI. Die echten Bereichsdaten und Bearbeitung hängen wir danach dran.</div>
+          <div class="area-chip-list">
+            <div class="area-chip"><span>Zentrum</span><span class="muted">sichtbar</span></div>
+            <div class="area-chip"><span>Nord</span><span class="muted">sichtbar</span></div>
+            <div class="area-chip"><span>Ost</span><span class="muted">sichtbar</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="floating-panel" data-panel="layers">
+        <div class="panel-titlebar" data-drag-handle>
+          <strong>Layer</strong>
+          <div class="panel-controls">
+            <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
+            <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="helper-text">Optik und Platz sind da. Im nächsten Schritt hängen wir die Layer-Logik ans echte Datenmodell.</div>
+          <div class="layer-chip-list">
+            <div class="layer-chip"><span><span class="swatch" style="background:#94a3b8"></span> Layer 1</span><span class="muted">Basis</span></div>
+            <div class="layer-chip"><span><span class="swatch" style="background:#38bdf8"></span> Layer 2</span><span class="muted">Wichtig</span></div>
+            <div class="layer-chip"><span><span class="swatch" style="background:#34d399"></span> Layer 3</span><span class="muted">Crew</span></div>
+            <div class="layer-chip"><span><span class="swatch" style="background:#fbbf24"></span> Layer 4</span><span class="muted">Später</span></div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 

@@ -135,6 +135,7 @@
     initMap();
     renderSpotList();
     renderProjectList();
+    initUiScaffolding();
   }
 
   async function loadCity() {
@@ -297,19 +298,26 @@
     };
   }
 
-  function renderSpotList() {
+  function renderSpotList(searchTerm = '') {
     const wrapper = qs('#spotList');
     const count = qs('#spotCount');
     if (!wrapper) return;
 
-    if (count) count.textContent = `${state.spots.length} Spots`;
+    const typeFilter = qs('#spotTypeFilter')?.value || '';
+    const visibleSpots = state.spots.filter(spot => {
+      const matchesSearch = !searchTerm || String(spot.name || '').toLowerCase().includes(searchTerm);
+      const matchesType = !typeFilter || spot.spot_type === typeFilter;
+      return matchesSearch && matchesType;
+    });
 
-    if (!state.spots.length) {
+    if (count) count.textContent = `${visibleSpots.length} Spots`; 
+
+    if (!visibleSpots.length) {
       wrapper.innerHTML = `<div class="empty-state">Noch keine Spots geladen. Vielleicht steht die DB noch mit Helm am Rand und macht sich warm.</div>`;
       return;
     }
 
-    wrapper.innerHTML = state.spots.slice(0, 80).map(spot => {
+    wrapper.innerHTML = visibleSpots.slice(0, 120).map(spot => {
       const eff = spotEffectiveState(spot);
       return `
         <button class="spot-item" data-spot-id="${spot.spot_id}">
@@ -442,6 +450,163 @@
     state.map.setView([spot.lat, spot.lng], Math.max(state.map.getZoom(), 15), { animate: true });
   }
 
+
+
+  function bindFloatingPanels() {
+    const panels = qsa('.floating-panel');
+    const dockButtons = qsa('[data-panel-target]');
+    if (!panels.length) return;
+
+    const panelState = {};
+
+    function getPanel(name) {
+      return qs(`.floating-panel[data-panel="${name}"]`);
+    }
+
+    function setDockActive(name, active) {
+      dockButtons.forEach(btn => btn.classList.toggle('is-active', btn.dataset.panelTarget === name && active));
+    }
+
+    function showPanel(name, pinned = null) {
+      const panel = getPanel(name);
+      if (!panel) return;
+      panel.classList.add('show');
+      panelState[name] = panelState[name] || { pinned: false };
+      if (pinned !== null) panelState[name].pinned = pinned;
+      panel.dataset.pinned = panelState[name].pinned ? 'true' : 'false';
+      const pinBtn = qs('[data-pin-panel]', panel);
+      pinBtn?.classList.toggle('is-pinned', panelState[name].pinned);
+      setDockActive(name, true);
+      requestMapResize();
+    }
+
+    function hidePanel(name, force = false) {
+      const panel = getPanel(name);
+      if (!panel) return;
+      panelState[name] = panelState[name] || { pinned: false };
+      if (panelState[name].pinned && !force) return;
+      panel.classList.remove('show');
+      setDockActive(name, false);
+      requestMapResize();
+    }
+
+    function togglePanel(name) {
+      const panel = getPanel(name);
+      if (!panel) return;
+      const isShown = panel.classList.contains('show');
+      if (!isShown) {
+        showPanel(name, true);
+        return;
+      }
+      panelState[name] = panelState[name] || { pinned: false };
+      if (!panelState[name].pinned) {
+        showPanel(name, true);
+      } else {
+        panelState[name].pinned = false;
+        hidePanel(name, true);
+      }
+    }
+
+    dockButtons.forEach(btn => {
+      const name = btn.dataset.panelTarget;
+      btn.addEventListener('mouseenter', () => {
+        panelState[name] = panelState[name] || { pinned: false };
+        if (!panelState[name].pinned) showPanel(name, false);
+      });
+      btn.addEventListener('click', () => togglePanel(name));
+    });
+
+    panels.forEach(panel => {
+      const name = panel.dataset.panel;
+      panelState[name] = { pinned: name === 'settings' || name === 'spotlist' };
+      panel.dataset.pinned = panelState[name].pinned ? 'true' : 'false';
+      if (panelState[name].pinned) showPanel(name, true);
+
+      panel.addEventListener('mouseleave', () => {
+        if (!panelState[name].pinned) hidePanel(name);
+      });
+
+      qs('[data-close-panel]', panel)?.addEventListener('click', () => {
+        panelState[name].pinned = false;
+        hidePanel(name, true);
+      });
+
+      qs('[data-pin-panel]', panel)?.addEventListener('click', () => {
+        panelState[name].pinned = !panelState[name].pinned;
+        showPanel(name, panelState[name].pinned);
+        if (!panelState[name].pinned) hidePanel(name);
+      });
+
+      makePanelDraggable(panel);
+    });
+
+    qs('#settingsToggleBtn')?.addEventListener('click', () => togglePanel('settings'));
+  }
+
+  function makePanelDraggable(panel) {
+    const handle = qs('[data-drag-handle]', panel);
+    if (!handle) return;
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let rectX = 0;
+    let rectY = 0;
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      panel.style.left = `${Math.max(8, rectX + dx)}px`;
+      panel.style.top = `${Math.max(8, rectY + dy)}px`;
+      panel.style.right = 'auto';
+    };
+
+    const onUp = () => {
+      dragging = false;
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      requestMapResize();
+    };
+
+    handle.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      dragging = true;
+      const rect = panel.getBoundingClientRect();
+      startX = e.clientX;
+      startY = e.clientY;
+      rectX = rect.left;
+      rectY = rect.top;
+      panel.style.left = `${rect.left}px`;
+      panel.style.top = `${rect.top}px`;
+      panel.style.right = 'auto';
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    });
+  }
+
+  function requestMapResize() {
+    setTimeout(() => state.map?.invalidateSize(), 40);
+  }
+
+  function initUiScaffolding() {
+    bindFloatingPanels();
+    initFilterScaffold();
+  }
+
+  function initFilterScaffold() {
+    const typeSelect = qs('#spotTypeFilter');
+    const searchInput = qs('#spotSearchInput');
+    if (typeSelect) {
+      const types = Array.from(new Set(state.spots.map(spot => spot.spot_type).filter(Boolean))).sort();
+      typeSelect.innerHTML = `<option value="">Alle Spottypen</option>${types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('')}`;
+    }
+    if (searchInput) {
+      searchInput.addEventListener('input', () => renderSpotList(searchInput.value.trim().toLowerCase()));
+    }
+    typeSelect?.addEventListener('change', () => renderSpotList(searchInput?.value?.trim().toLowerCase() || ''));
+  }
+
+
   function bindCityUi() {
     qs('#openProjectModal')?.addEventListener('click', () => toggleModal(true));
     qs('#closeProjectModal')?.addEventListener('click', () => toggleModal(false));
@@ -468,7 +633,8 @@
     qs('#refreshBtn')?.addEventListener('click', async () => {
       await Promise.all([loadProjects(), loadSpots()]);
       updateMarkers();
-      renderSpotList();
+      renderSpotList(qs('#spotSearchInput')?.value?.trim().toLowerCase() || '');
+      initFilterScaffold();
       toast('Daten neu geladen.');
     });
   }
