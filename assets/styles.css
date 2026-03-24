@@ -183,7 +183,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
   gap: 16px;
   margin: 28px 0 14px;
 }
-.section-title h2 { margin: 0; font-size: 1.3rem; }
+.section-title h2 { margin: 0; font-size: 1.9rem; }
 .muted { color: var(--muted); }
 
 .panel {
