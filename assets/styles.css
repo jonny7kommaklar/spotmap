@@ -589,3 +589,240 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
   }
   .city-hud { top: 14px; left: 12px; }
 }
+
+.project-card {
+  display: grid;
+  gap: 8px;
+}
+.project-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 8px 4px;
+}
+.spot-card {
+  display: grid;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+}
+.spot-card.active {
+  border-color: rgba(77, 171, 255, 0.34);
+  background: rgba(77, 171, 255, 0.08);
+}
+.spot-item-rich {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+.spot-item-thumb,
+.spot-item-thumb img,
+.spot-thumb-fallback {
+  width: 78px;
+  height: 78px;
+  border-radius: 14px;
+}
+.spot-item-thumb img {
+  object-fit: cover;
+  display: block;
+}
+.spot-thumb-fallback {
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 1.35rem;
+}
+.spot-item-main {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+.spot-item-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.spot-item-topline h4 {
+  margin: 0;
+  line-height: 1.2;
+}
+.spot-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  min-width: 34px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #e2e8f0;
+  font-size: .78rem;
+  white-space: nowrap;
+}
+.spot-flags,
+.popup-flag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mini-tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #dbe5f0;
+  font-size: .74rem;
+}
+.spot-row-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 8px 8px;
+}
+.compact-btn {
+  min-height: 38px;
+  padding: 8px 12px;
+  font-size: .9rem;
+}
+.popup-card {
+  display: grid;
+  gap: 10px;
+  min-width: 260px;
+}
+.popup-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.popup-hero {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.popup-meta {
+  color: #cbd5e1;
+  font-size: .88rem;
+}
+.popup-copy {
+  margin: 0;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+.popup-gallery {
+  display: flex;
+  gap: 8px;
+  overflow: auto;
+  padding-bottom: 4px;
+}
+.popup-gallery img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.popup-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.popup-action-btn,
+.popup-link-btn {
+  min-height: 38px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+}
+.planning-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.planning-stat {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: grid;
+  gap: 4px;
+}
+.planning-stat strong {
+  font-size: 1.3rem;
+}
+.planning-group {
+  display: grid;
+  gap: 10px;
+}
+.planning-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.planning-group-list {
+  display: grid;
+  gap: 8px;
+}
+.planning-item {
+  text-align: left;
+}
+.modal-wide {
+  width: min(900px, 100%);
+}
+.two-col-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.two-col-span {
+  grid-column: 1 / -1;
+}
+.spot-editor-preview-card {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+.spot-editor-preview-card img,
+.spot-editor-fallback {
+  width: 160px;
+  height: 120px;
+  border-radius: 16px;
+}
+.spot-editor-preview-card img {
+  object-fit: cover;
+}
+.spot-editor-preview-copy {
+  display: grid;
+  gap: 8px;
+}
+.spot-editor-preview-copy p {
+  margin: 0;
+  color: #dbe5f0;
+  line-height: 1.5;
+}
+@media (max-width: 980px) {
+  .spot-item-rich {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+  .spot-item-thumb,
+  .spot-item-thumb img,
+  .spot-thumb-fallback {
+    width: 68px;
+    height: 68px;
+  }
+  .two-col-grid,
+  .planning-stats,
+  .spot-editor-preview-card {
+    grid-template-columns: 1fr;
+  }
+  .spot-editor-preview-card img,
+  .spot-editor-fallback {
+    width: 100%;
+    height: 180px;
+  }
+}

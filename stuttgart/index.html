@@ -98,7 +98,7 @@
           <div class="panel-section stack">
             <div class="panel-head">
               <strong>Projekte</strong>
-              <button id="openProjectModal" data-auth-only class="primary-btn">+ Neu</button>
+              <div class="row-wrap"><button id="openProjectModal" data-auth-only class="primary-btn">+ Neu</button><button id="editProjectBtn" data-auth-only class="ghost-btn">Bearbeiten</button></div>
             </div>
             <div class="muted">Aktiv: <span id="currentProjectInfo">Kein Projekt aktiv</span></div>
             <div id="projectList" class="project-list"></div>
@@ -137,8 +137,8 @@
                 <option value="">Alle Spottypen</option>
               </select>
             </div>
-            <label class="row"><input type="checkbox" id="favoritesOnlyToggle" disabled /> <span>Nur Favoriten (Schritt 2)</span></label>
-            <div class="helper-text">Für Schritt 1 hängt der Filter schon im Layout. Die Live-Logik bauen wir im nächsten Zug sauber an.</div>
+            <label class="row"><input type="checkbox" id="favoritesOnlyToggle" disabled /> <span>Nur Favoriten</span></label>
+            <div class="helper-text">Suche, Typ und Favoriten hängen jetzt direkt an den geladenen Projektzuständen.</div>
           </div>
         </div>
       </section>
@@ -168,12 +168,10 @@
         <div class="panel-body">
           <div class="panel-section">
             <div class="label">Planungsstatus</div>
-            <div class="helper-text">Hier sitzt später Tagesplanung, Reihenfolge und Routing. Für Schritt 1 steht das Fenster schon bereit, damit die Map nicht wieder in einer Dauer-Sidebar erstickt.</div>
+            <div class="planning-stats" id="planningStats"></div>
           </div>
           <div class="panel-section">
-            <div class="mini-log-item">Tag 1 · Innenstadt · Street-heavy</div>
-            <div class="mini-log-item">Tag 2 · Süd/Ost · eher entspannt</div>
-            <div class="mini-log-item">Tag 3 · Backup bei Regen</div>
+            <div id="planningList" class="stack"></div>
           </div>
         </div>
       </section>
@@ -187,12 +185,8 @@
           </div>
         </div>
         <div class="panel-body">
-          <div class="helper-text">Schritt 1 stellt nur das flexible UI. Die echten Bereichsdaten und Bearbeitung hängen wir danach dran.</div>
-          <div class="area-chip-list">
-            <div class="area-chip"><span>Zentrum</span><span class="muted">sichtbar</span></div>
-            <div class="area-chip"><span>Nord</span><span class="muted">sichtbar</span></div>
-            <div class="area-chip"><span>Ost</span><span class="muted">sichtbar</span></div>
-          </div>
+          <div class="helper-text">Areas werden jetzt aus Spot- und Projektdaten zusammengezählt.</div>
+          <div class="area-chip-list" id="areasPanelList"></div>
         </div>
       </section>
 
@@ -205,13 +199,8 @@
           </div>
         </div>
         <div class="panel-body">
-          <div class="helper-text">Optik und Platz sind da. Im nächsten Schritt hängen wir die Layer-Logik ans echte Datenmodell.</div>
-          <div class="layer-chip-list">
-            <div class="layer-chip"><span><span class="swatch" style="background:#94a3b8"></span> Layer 1</span><span class="muted">Basis</span></div>
-            <div class="layer-chip"><span><span class="swatch" style="background:#38bdf8"></span> Layer 2</span><span class="muted">Wichtig</span></div>
-            <div class="layer-chip"><span><span class="swatch" style="background:#34d399"></span> Layer 3</span><span class="muted">Crew</span></div>
-            <div class="layer-chip"><span><span class="swatch" style="background:#fbbf24"></span> Layer 4</span><span class="muted">Später</span></div>
-          </div>
+          <div class="helper-text">Die Verteilung kommt jetzt live aus dem aktiven Projekt.</div>
+          <div class="layer-chip-list" id="layerPanelList"></div>
         </div>
       </section>
     </div>
@@ -220,10 +209,12 @@
   <div id="projectModalBackdrop" class="modal-backdrop">
     <div class="modal">
       <div class="panel-head">
-        <h3>Neues Projekt</h3>
+        <h3 id="projectModalTitle">Neues Projekt</h3>
         <button id="closeProjectModal" class="ghost-btn">Schließen</button>
       </div>
       <form id="createProjectForm" class="stack">
+        <input id="projectFormMode" type="hidden" value="create" />
+        <input id="projectId" type="hidden" value="" />
         <div>
           <div class="label">Projektname</div>
           <input id="projectName" class="input" type="text" placeholder="Sommertrip 2026" required />
@@ -237,11 +228,73 @@
           <span>Öffentlich lesbar</span>
         </label>
         <div class="row-wrap">
-          <button type="submit" class="primary-btn">Projekt erstellen</button>
+          <button type="submit" class="primary-btn">Speichern</button>
+          <button type="button" class="ghost-btn" id="archiveProjectBtn" style="display:none">Archivieren</button>
           <button type="button" class="ghost-btn" id="closeProjectModalAlt" onclick="document.getElementById('closeProjectModal').click()">Abbrechen</button>
         </div>
       </form>
     </div>
   </div>
+
+
+  <div id="spotEditorBackdrop" class="modal-backdrop">
+    <div class="modal modal-wide">
+      <div class="panel-head">
+        <div>
+          <h3 id="spotEditorTitle">Spot bearbeiten</h3>
+          <div id="spotEditorMeta" class="muted"></div>
+        </div>
+        <button id="closeSpotEditor" class="ghost-btn">Schließen</button>
+      </div>
+      <form id="spotEditorForm" class="stack">
+        <input id="spotEditorSpotId" type="hidden" value="" />
+        <div id="spotEditorPreview" class="stack"></div>
+        <div class="panel-grid two-col-grid">
+          <div>
+            <div class="label">Layer</div>
+            <select id="editLayer" class="select">
+              <option value="1">Layer 1</option><option value="2">Layer 2</option><option value="3">Layer 3</option><option value="4">Layer 4</option>
+              <option value="5">Layer 5</option><option value="6">Layer 6</option><option value="7">Layer 7</option><option value="8">Layer 8</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Status</div>
+            <select id="editStatus" class="select">
+              <option value="none">offen</option>
+              <option value="maybe">vielleicht</option>
+              <option value="planned">geplant</option>
+              <option value="done">done</option>
+              <option value="skipped">übersprungen</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Tag</div>
+            <input id="editPlannedDay" class="input" type="text" placeholder="z. B. 1" />
+          </div>
+          <div>
+            <div class="label">Priority</div>
+            <input id="editPriority" class="input" type="text" placeholder="A / 1 / must" />
+          </div>
+          <div class="two-col-span">
+            <div class="label">Area</div>
+            <input id="editArea" class="input" type="text" placeholder="z. B. Zentrum" />
+          </div>
+          <div class="two-col-span">
+            <div class="label">Kommentar</div>
+            <textarea id="editComment" class="textarea" placeholder="Notizen, Crew-Infos, Regenoption, Uhrzeit ..."></textarea>
+          </div>
+        </div>
+        <div class="row-wrap">
+          <label class="row"><input id="editVisited" type="checkbox" /> <span>Besucht</span></label>
+          <label class="row"><input id="editFavorite" type="checkbox" /> <span>Favorit</span></label>
+        </div>
+        <div class="row-wrap">
+          <button type="submit" class="primary-btn">Spot speichern</button>
+          <button type="button" id="quickRemoveFavoriteBtn" class="ghost-btn">Favorit entfernen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </body>
 </html>
