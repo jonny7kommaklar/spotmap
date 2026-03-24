@@ -1,7 +1,9 @@
 :root {
   --bg: #07111f;
   --bg-soft: rgba(7, 17, 31, 0.72);
-  --panel: rgba(12, 22, 39, 0.58);
+  --panel-alpha: 0.5;
+  --panel-strong-alpha: 0.62;
+  --panel: rgba(12, 22, 39, var(--panel-alpha));
   --panel-2: rgba(8, 15, 28, 0.84);
   --line: rgba(255, 255, 255, 0.12);
   --line-strong: rgba(255, 255, 255, 0.18);
@@ -214,6 +216,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
   padding: 10px 12px;
 }
 .textarea { min-height: 92px; resize: vertical; }
+.range-input { width: 100%; accent-color: var(--accent); }
 .stack { display: flex; flex-direction: column; gap: 10px; }
 .row { display: flex; gap: 10px; align-items: center; }
 .row-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -274,7 +277,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 .auth-box {
   padding: 16px;
   border-radius: var(--radius-lg);
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255, calc(var(--panel-alpha) * 0.12));
   border: 1px solid rgba(255,255,255,0.08);
 }
 .status-dot {
@@ -442,7 +445,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
   max-height: calc(100vh - 36px);
   display: none;
   flex-direction: column;
-  background: rgba(9, 18, 33, 0.5);
+  background: rgba(9, 18, 33, var(--panel-alpha));
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 24px;
   box-shadow: var(--shadow);

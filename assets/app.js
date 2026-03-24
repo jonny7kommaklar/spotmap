@@ -458,6 +458,21 @@
     if (!panels.length) return;
 
     const panelState = {};
+    let panelTransparency = parseFloat(localStorage.getItem('spotmap.panelTransparency') || '0.5');
+    if (Number.isNaN(panelTransparency)) panelTransparency = 0.5;
+    panelTransparency = Math.max(0.18, Math.min(0.9, panelTransparency));
+
+    function applyPanelTransparency(value) {
+      panelTransparency = Math.max(0.18, Math.min(0.9, Number(value) || 0.5));
+      document.documentElement.style.setProperty('--panel-alpha', String(panelTransparency));
+      document.documentElement.style.setProperty('--panel-strong-alpha', String(Math.min(0.98, panelTransparency + 0.12)));
+      try { localStorage.setItem('spotmap.panelTransparency', String(panelTransparency)); } catch (_) {}
+      const slider = qs('#panelTransparencyRange');
+      const label = qs('#panelTransparencyValue');
+      if (slider && slider !== document.activeElement) slider.value = String(panelTransparency);
+      if (label) label.textContent = `${Math.round(panelTransparency * 100)}%`;
+    }
+    applyPanelTransparency(panelTransparency);
 
     function getPanel(name) {
       return qs(`.floating-panel[data-panel="${name}"]`);
@@ -493,16 +508,14 @@
     function togglePanel(name) {
       const panel = getPanel(name);
       if (!panel) return;
+      panelState[name] = panelState[name] || { pinned: false };
       const isShown = panel.classList.contains('show');
       if (!isShown) {
-        showPanel(name, true);
-        return;
-      }
-      panelState[name] = panelState[name] || { pinned: false };
-      if (!panelState[name].pinned) {
-        showPanel(name, true);
-      } else {
+        showPanel(name, false);
+      } else if (panelState[name].pinned) {
         panelState[name].pinned = false;
+        hidePanel(name, true);
+      } else {
         hidePanel(name, true);
       }
     }
@@ -513,17 +526,29 @@
         panelState[name] = panelState[name] || { pinned: false };
         if (!panelState[name].pinned) showPanel(name, false);
       });
-      btn.addEventListener('click', () => togglePanel(name));
+      btn.addEventListener('click', () => {
+        panelState[name] = panelState[name] || { pinned: false };
+        if (!panelState[name].pinned) {
+          panelState[name].pinned = true;
+          showPanel(name, true);
+          return;
+        }
+        panelState[name].pinned = false;
+        hidePanel(name, true);
+      });
     });
 
     panels.forEach(panel => {
       const name = panel.dataset.panel;
-      panelState[name] = { pinned: name === 'settings' || name === 'spotlist' };
-      panel.dataset.pinned = panelState[name].pinned ? 'true' : 'false';
-      if (panelState[name].pinned) showPanel(name, true);
+      panelState[name] = { pinned: false };
+      panel.dataset.pinned = 'false';
 
       panel.addEventListener('mouseleave', () => {
         if (!panelState[name].pinned) hidePanel(name);
+      });
+
+      panel.addEventListener('mouseenter', () => {
+        if (!panel.classList.contains('show')) showPanel(name, panelState[name].pinned);
       });
 
       qs('[data-close-panel]', panel)?.addEventListener('click', () => {
@@ -534,13 +559,17 @@
       qs('[data-pin-panel]', panel)?.addEventListener('click', () => {
         panelState[name].pinned = !panelState[name].pinned;
         showPanel(name, panelState[name].pinned);
-        if (!panelState[name].pinned) hidePanel(name);
+        if (!panelState[name].pinned) hidePanel(name, true);
       });
 
       makePanelDraggable(panel);
     });
 
     qs('#settingsToggleBtn')?.addEventListener('click', () => togglePanel('settings'));
+
+    qs('#panelTransparencyRange')?.addEventListener('input', (e) => {
+      applyPanelTransparency(e.target.value);
+    });
   }
 
   function makePanelDraggable(panel) {

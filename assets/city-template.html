@@ -35,12 +35,12 @@
 
 
       <nav class="city-dock" aria-label="Panels">
-        <button class="dock-btn" type="button" data-panel-target="settings"><span>⚙️</span><small>Settings</small></button>
         <button class="dock-btn" type="button" data-panel-target="filter"><span>🔎</span><small>Filter</small></button>
         <button class="dock-btn" type="button" data-panel-target="spotlist"><span>📍</span><small>Spotlist</small></button>
-        <button class="dock-btn" type="button" data-panel-target="planning"><span>🗓️</span><small>Planung</small></button>
-        <button class="dock-btn" type="button" data-panel-target="areas"><span>🧭</span><small>Bereiche</small></button>
         <button class="dock-btn" type="button" data-panel-target="layers"><span>🧱</span><small>Layer</small></button>
+        <button class="dock-btn" type="button" data-panel-target="areas"><span>🧭</span><small>Areas</small></button>
+        <button class="dock-btn" type="button" data-panel-target="planning"><span>🗓️</span><small>Planning</small></button>
+        <button class="dock-btn" type="button" data-panel-target="settings"><span>⚙️</span><small>Settings</small></button>
       </nav>
 
       <section class="floating-panel" data-panel="settings">
@@ -73,6 +73,18 @@
                 <button type="button" id="refreshBtn" class="ghost-btn">Neu laden</button>
               </div>
             </form>
+          </div>
+
+          <div class="panel-section stack">
+            <div class="panel-head">
+              <strong>Panels</strong>
+              <span id="panelTransparencyValue" class="muted">50%</span>
+            </div>
+            <div>
+              <div class="label">Transparenz</div>
+              <input id="panelTransparencyRange" class="range-input" type="range" min="0.18" max="0.9" step="0.02" value="0.5" />
+            </div>
+            <div class="helper-text">Mehr Glas oder mehr Brettwand – du schiebst den Regler, die Panels hören brav.</div>
           </div>
 
           <div class="panel-section stack">
@@ -139,7 +151,7 @@
 
       <section class="floating-panel" data-panel="planning">
         <div class="panel-titlebar" data-drag-handle>
-          <strong>Planung</strong>
+          <strong>Planning</strong>
           <div class="panel-controls">
             <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
             <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
@@ -160,7 +172,7 @@
 
       <section class="floating-panel" data-panel="areas">
         <div class="panel-titlebar" data-drag-handle>
-          <strong>Bereiche</strong>
+          <strong>Areas</strong>
           <div class="panel-controls">
             <button class="panel-icon-btn" type="button" data-pin-panel title="Anpinnen">📌</button>
             <button class="panel-icon-btn" type="button" data-close-panel title="Schließen">✕</button>
