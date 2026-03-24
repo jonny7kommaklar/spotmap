@@ -87,8 +87,8 @@ button { cursor: pointer; border: 0; }
 
 .pill, .ghost-btn, .primary-btn, .danger-btn, .dock-btn {
   min-height: 42px;
-  border-radius: 999px;
-  padding: 0 16px;
+  border-radius: 400px;
+  padding: 4 16px;
   transition: transform .16s ease, opacity .16s ease, background .16s ease, border-color .16s ease;
 }
 .pill, .ghost-btn {
