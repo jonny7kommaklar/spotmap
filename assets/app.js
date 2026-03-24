@@ -117,7 +117,7 @@
         <div class="city-card-bg" style="background-image:url('${getCityCover(city.slug)}')"></div>
         <div class="meta"><span>${city.country || ''}</span><span>•</span><span>${city.slug}</span></div>
         <h3>${city.name}</h3>
-        <p>${city.description_short || 'Öffne die Map, wähle ein Projekt und leg los.'}</p>
+        <p>${city.description_short || 'Stalinplaza und billiges Bier'}</p>
         <div class="row-wrap">
           <span class="pill">Map öffnen</span>
         </div>
