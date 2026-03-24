@@ -48,7 +48,7 @@ button { cursor: pointer; border: 0; }
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(7,11,22,0.1), rgba(7,11,22,0.5) 28%, rgba(7,11,22,0.9) 100%);
+  background: linear-gradient(180deg, rgba(7,11,22,0.1), rgba(7,11,22,0.5) 10%, rgba(7,11,22,0.9) 60%);
 }
 
 .content-wrap {
