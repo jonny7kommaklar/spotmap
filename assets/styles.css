@@ -125,7 +125,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
   margin-bottom: 18px;
 }
 .hero-copy h1 {
-  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-size: clamp(2.0rem, 5vw, 5rem);
   line-height: 0.95;
   margin: 0 0 14px;
 }
