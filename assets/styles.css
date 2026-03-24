@@ -125,7 +125,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
   margin-bottom: 18px;
 }
 .hero-copy h1 {
-  font-size: clamp(2.0rem, 5vw, 5rem);
+  font-size: clamp(1.9rem, 5vw, 5rem);
   line-height: 0.95;
   margin: 0 0 14px;
 }
@@ -382,7 +382,7 @@ button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 }
 .city-title-pill h1 {
   margin: 0;
-  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-size: clamp(1.1rem, 2vw, 1.8rem);
 }
 .city-title-pill p {
   margin: 0;
