@@ -42,7 +42,7 @@ button { cursor: pointer; border: 0; }
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.34) saturate(1.04);
+  filter: brightness(0.54) saturate(1.04);
   transform: scale(1.04);
 }
 .hero-overlay {
